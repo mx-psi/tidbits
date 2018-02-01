@@ -4,7 +4,7 @@ Attempts to rename videos and subtitles by removing unimportant bits
 
 ## Running the script
 
-You need to have Python 3. Just run `./video_renamer.py [--dir DIR]`.
+You need to have Python 3. Just run `./video_renamer.py [-n]`.
 
 ## Options
 
