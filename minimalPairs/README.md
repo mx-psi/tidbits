@@ -1,5 +1,7 @@
 # Minimal Pairs Anki cards creator
 
+*Puedes leer un artículo en español sobre minimal pairs [en coDual](https://codual.github.io/2017/08/01/pairs/)*.
+
 Creates csv compatible with Anki from list of English [minimal pairs](https://en.wikipedia.org/wiki/Minimal_pair) (with Spanish translation).
 
 ## Running the script
