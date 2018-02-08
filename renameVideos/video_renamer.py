@@ -10,10 +10,11 @@ import argparse
 video_extensions = [".mkv",".srt",".avi",".mp4"]
 
 # Anything after these is removed from the filename
-to_remove  = ["1080p","720p","BrRip","DVDRip","YIFY",
-              "BOKUTOX","x264","WEB-DL","HDTV","H264",
-              "AAC","HDRip","AC3-EVO","x265","WEBRip",
-              "x264-[MULVAcoded]"]
+to_remove  = set(map(lambda x: x.lower(),
+                     ["1080p","720p","BrRip","DVDRip", "YIFY",
+                      "BOKUTOX","x264","WEB-DL","HDTV","H264",
+                      "AAC","HDRip","AC3-EVO","x265","WEBRip",
+                      "x264-[MULVAcoded]"]))
 
 def pretty_name(path, sep="."):
     """Takes a path and prettifies
@@ -25,7 +26,7 @@ def pretty_name(path, sep="."):
     new_path = ""
 
     for element in elements:
-        if element in to_remove:
+        if element.lower() in to_remove:
             break
         else:
            new_path += element + " "
