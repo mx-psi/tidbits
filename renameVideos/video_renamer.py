@@ -14,7 +14,8 @@ to_remove  = set(map(lambda x: x.lower(),
                      ["1080p","720p","BrRip","DVDRip", "YIFY",
                       "BOKUTOX","x264","WEB-DL","HDTV","H264",
                       "AAC","HDRip","AC3-EVO","x265","WEBRip",
-                      "x264-[MULVAcoded]"]))
+                      "x264-[MULVAcoded]", "DVDScr", "XviD-ETRG",
+                      "AC3", "2.0-EVO"]))
 
 def pretty_name(path, sep="."):
     """Takes a path and prettifies
