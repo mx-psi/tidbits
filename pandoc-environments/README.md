@@ -13,7 +13,7 @@ There are infinitely many prime numbers.
 into this:
 
 ``` latex
-\begin{theorem}[euclid]
+\begin{theorem}[Euclid's theorem]
 \label{thm:euclid}
 There are infinitely many prime numbers.
 \end{theorem}
