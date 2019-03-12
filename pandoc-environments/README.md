@@ -21,12 +21,17 @@ There are infinitely many prime numbers.
 
 ## Usage
 
-You need [`pandoc`](http://pandoc.org/installing.html) 2 or greater, [Haskell](https://www.haskell.org/) and [pandoc-types](https://hackage.haskell.org/package/pandoc-types).
+You need [`pandoc`](http://pandoc.org/installing.html) 2 or greater, and [stack](https://docs.haskellstack.org).
 You can use it then just like any other filter:
 
 ``` shell
 pandoc -F ./env.hs example.md -o example.pdf
 ```
 
+## Troubleshooting
+
+**It is taking too long to run**
+: The first time you run the script `stack` will download and install Haskell's compiler (~1.5GB) and the necessary dependencies, which might take a while. Subsequent runs should be almost instantaneous.
+If you don't like this setup, replace `stack` by `runghc` on the first line of the script.
 
 
