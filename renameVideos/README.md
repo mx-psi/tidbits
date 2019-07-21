@@ -1,4 +1,4 @@
-# Minimal Pairs Anki cards creator
+# Video renamer
 
 Attempts to rename videos and subtitles by removing unimportant bits
 
