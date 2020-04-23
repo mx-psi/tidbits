@@ -10,7 +10,7 @@ Go to your profile page and copy the `user_id` field from the url:
 
 ## Running the script
 
-You need to have [Python 3](https://www.python.org/downloads) and [BeautifulSoup 4](https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-beautiful-soup) installed. Once installed just run:
+You need to have [Python 3](https://www.python.org/downloads), [BeautifulSoup 4](https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-beautiful-soup), [requests](https://requests.readthedocs.io/en/master/) and [lxml](https://lxml.de/) installed. Once installed just run:
 
 ``` sh
 ./faScrap.py [--csv FILE] [--lang LANG] id
