@@ -20,20 +20,11 @@ You need to have [Python 3](https://www.python.org/downloads), [BeautifulSoup 4]
 
 First of all you need to have docker installed, and latter you have to run this simple steps
 
-**Generate the CSV**
-
-`docker run --name fa-letterboxd fa-letterboxd python3 faScrap.py --lang en --csv [CSV_NAME].csv [FA_USER_ID]`
-
-**Copy the csv to computer**
-
-`docker cp fa-letterboxd:/[CSV_NAME].csv .`
-
-**Remove the container**
-
-`docker rm fa-letterboxd`
+`docker run --name fa-letterboxd fa-letterboxd python3 faScrap.py --lang en --csv fa-to-lbx.csv 702720 && docker cp fa-letterboxd:/fa-to-lbx.csv . && docker rm fa-letterboxd`
 
 ## Options
 
+- `--list LIST` The id of the public list you wanna export, if is available export the list and not your ratings
 - `--csv FILE` sets csv export file name to `FILE`
 - `--lang LANG` sets language to `LANG`. Letterboxd importer works best with english, the default option.
 

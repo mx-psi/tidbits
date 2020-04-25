@@ -68,7 +68,7 @@ def is_film(tag, lang):
   return not any(map(title.endswith, skip))
 
 
-def get_data(user_id, lang):
+def get_profile_data(user_id, lang):
   """Gets list of films from user id"""
   
   data = []
@@ -111,6 +111,41 @@ def get_data(user_id, lang):
   return data
 
 
+def get_list_data(user_id, list_id, lang):
+  """Gets list of films from list id"""
+
+  data = []
+  eof = False
+  n = 1
+  FA = "https://www.filmaffinity.com/" + lang + \
+       "/userlist.php?user_id={user_id}&list_id={list_id}&page={n}"
+
+  while not eof:
+    request = requests.get(FA.format(user_id=user_id,list_id=list_id, n=n))
+    request.encoding = "utf-8"
+    page = bs4.BeautifulSoup(request.text, "lxml")
+    tags = page.find_all(class_=["movie-wrapper"])
+
+    for tag in tags:
+        title = tag.find_all(class_="mc-title")[0].a
+        film = {
+          "Title": title.string.strip(),
+          "Year": title.next_sibling.strip()[1:-1],
+          "Directors": get_directors(tag),
+        }
+        data.append(film)
+
+    eof = request.status_code != 200
+    if not eof:
+      print("Página {n}".format(n=n), end = "\r")
+    else:
+      print("Página {n}. Download complete!".format(n=n - 1))
+
+    n += 1
+
+  return data
+
+
 def save_to_csv(data, filename):
   """Saves list of dictionaries in a csv file"""
   
@@ -127,6 +162,7 @@ if __name__ == "__main__":
     description =
     "Generates csv compatible with LetterBoxd from Filmaffinity user's id.")
   parser.add_argument("id", help = "User's id")
+  parser.add_argument("--list", help="List to export", metavar="LIST")
   parser.add_argument(
     "--csv", nargs = 1, help = "Name of export FILE", metavar = "FILE")
   parser.add_argument(
@@ -157,9 +193,12 @@ if __name__ == "__main__":
         exit()
   
   try:
-    data = get_data(args.id, args.lang[0])
+    if args.list:
+      data = get_list_data(args.id, args.list, args.lang[0])
+    else:
+      data = get_profile_data(args.id, args.lang[0])
   except ValueError as v:
     print("Error:", v)
     exit()
-  
+
   save_to_csv(data, export_file)
