@@ -16,6 +16,22 @@ You need to have [Python 3](https://www.python.org/downloads), [BeautifulSoup 4]
 ./faScrap.py [--csv FILE] [--lang LANG] id
 ```
 
+### With docker
+
+First of all you need to have docker installed, and latter you have to run this simple steps
+
+**Generate the CSV**
+
+`docker run --name fa-letterboxd fa-letterboxd python3 faScrap.py --lang en --csv [CSV_NAME].csv [FA_USER_ID]`
+
+**Copy the csv to computer**
+
+`docker cp fa-letterboxd:/[CSV_NAME].csv .`
+
+**Remove the container**
+
+`docker rm fa-letterboxd`
+
 ## Options
 
 - `--csv FILE` sets csv export file name to `FILE`
