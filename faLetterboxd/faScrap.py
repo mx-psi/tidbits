@@ -167,9 +167,13 @@ if __name__ == "__main__":
     choices = {"es", "en"})
   
   args = parser.parse_args()
-  export_file = args.csv[
-    0] if args.csv else "filmAffinity_{lang}_{id}.csv".format(
-      id = args.id, lang = args.lang[0])
+
+  if args.csv:
+    export_file = args.csv[0]
+  elif args.list:
+    export_file = "filmAffinity_{lang}_{id}_list_{list_id}.csv".format(id = args.id, lang = args.lang[0], list_id = args.list)
+  else:
+    export_file = "filmAffinity_{lang}_{id}.csv".format(id = args.id, lang = args.lang[0])
   
   try:
     set_locale(args.lang[0])
