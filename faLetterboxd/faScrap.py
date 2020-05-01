@@ -16,7 +16,7 @@ import bs4
 
 
 # FilmAffinity root URL
-FA_ROOT_URL = "https://www.filmaffinity.com/{lang}/userlist.php?"
+FA_ROOT_URL = "https://www.filmaffinity.com/{lang}/"
 
 
 def set_locale(lang):
@@ -94,7 +94,9 @@ def pages_from(template):
 def get_profile_data(user_id, lang):
     """Yields films rated by user given user id"""
 
-    FA = (FA_ROOT_URL + "user_id={id}&p={{}}&orderby=4").format(lang=lang, id=user_id)
+    FA = (FA_ROOT_URL + "userratings.php?user_id={id}&p={{}}&orderby=4").format(
+        lang=lang, id=user_id
+    )
 
     for page in pages_from(FA):
         tags = page.find_all(class_=["user-ratings-header", "user-ratings-movie"])
@@ -118,9 +120,9 @@ def get_profile_data(user_id, lang):
 def get_list_data(user_id, list_id, lang):
     """Yields films from list given list id"""
 
-    FA = (FA_ROOT_URL + "user_id={user_id}&list_id={list_id}&page={{}}").format(
-        lang=lang, user_id=user_id, list_id=list_id
-    )
+    FA = (
+        FA_ROOT_URL + "userlist.php?user_id={user_id}&list_id={list_id}&page={{}}"
+    ).format(lang=lang, user_id=user_id, list_id=list_id)
 
     for page in pages_from(FA):
         tags = page.find_all(class_=["movie-wrapper"])
