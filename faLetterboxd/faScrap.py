@@ -15,6 +15,10 @@ import requests
 import bs4
 
 
+# FilmAffinity root URL
+FA_ROOT_URL = "https://www.filmaffinity.com/{lang}/userlist.php?"
+
+
 def set_locale(lang):
     """Attempts to set locale."""
 
@@ -43,32 +47,29 @@ def get_date(tag, lang):
 
 def get_directors(tag):
     """Gets directors from a film"""
-    directors = list(
-        map(
-            lambda d: d.a["title"],
-            tag.find_all(class_="mc-director")[0].find_all(class_="nb"),
-        )
+
+    def sanitize_director_tag(d):
+        """Sanitizes director tag into director name."""
+        director = d.a["title"]
+        return director[:-10] if director.endswith("(Creator)") else director
+
+    return ", ".join(
+        sanitize_director_tag(d)
+        for d in tag.find_all(class_="mc-director")[0].find_all(class_="nb")
     )
-
-    for director in directors:
-        if director.endswith("(Creator)"):
-            director = director[:-10]
-
-    return ", ".join(directors)
 
 
 def is_film(tag, lang):
     """Checks if given tag is a film"""
 
     title = tag.find_all(class_="mc-title")[0].a.string.strip()
-    skip = []
 
     if lang == "es":
         skip = ["(Serie de TV)", "(Miniserie de TV)", "(TV)", "(C)"]
     else:
         skip = ["(TV Series)", "(TV Miniseries)", "(TV)", "(S)"]
 
-    return not any(map(title.endswith, skip))
+    return not any(title.endswith(suffix) for suffix in skip)
 
 
 def pages_from(template):
@@ -93,9 +94,7 @@ def pages_from(template):
 def get_profile_data(user_id, lang):
     """Yields films rated by user given user id"""
 
-    FA = "https://www.filmaffinity.com/{lang}/userratings.php?user_id={id}&p={{}}&orderby=4".format(
-        lang=lang, id=user_id
-    )
+    FA = (FA_ROOT_URL + "user_id={id}&p={{}}&orderby=4").format(lang=lang, id=user_id)
 
     for page in pages_from(FA):
         tags = page.find_all(class_=["user-ratings-header", "user-ratings-movie"])
@@ -119,7 +118,7 @@ def get_profile_data(user_id, lang):
 def get_list_data(user_id, list_id, lang):
     """Yields films from list given list id"""
 
-    FA = "https://www.filmaffinity.com/{lang}/userlist.php?user_id={user_id}&list_id={list_id}&page={{}}".format(
+    FA = (FA_ROOT_URL + "user_id={user_id}&list_id={list_id}&page={{}}").format(
         lang=lang, user_id=user_id, list_id=list_id
     )
 
@@ -148,10 +147,10 @@ def save_to_csv(films, filename):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Generates csv compatible with LetterBoxd from Filmaffinity user data."
+        description="Generates Letterboxd-compatible csv from Filmaffinity user data."
     )
-    parser.add_argument("id", help="User's id")
-    parser.add_argument("--list", help="List to export", metavar="LIST")
+    parser.add_argument("id", help="User id")
+    parser.add_argument("--list", help="List id", metavar="LIST")
     parser.add_argument("--csv", nargs=1, help="Name of export FILE", metavar="FILE")
     parser.add_argument(
         "--lang",
