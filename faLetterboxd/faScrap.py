@@ -68,23 +68,38 @@ def is_film(tag, lang):
   return not any(map(title.endswith, skip))
 
 
+def pages_from(template):
+    """Yields pages from a given section until one of them fails."""
+
+    eof = False
+    n = 1
+
+    while not eof:
+        request = requests.get(template.format(n))
+        request.encoding = "utf-8"
+        page = bs4.BeautifulSoup(request.text, "lxml")
+        yield page
+
+        eof = request.status_code != 200
+        if not eof:
+            print("Página {n}".format(n=n), end="\r")
+        else:
+            print("Página {n}. Download complete!".format(n=n - 1))
+        n += 1
+
+
 def get_profile_data(user_id, lang):
   """Gets list of films from user id"""
-  
+
   data = []
-  eof = False
-  n = 1
   FA = "https://www.filmaffinity.com/" + lang + \
-      "/userratings.php?user_id={id}&p={n}&orderby=4"
-  
-  while not eof:
-    request = requests.get(FA.format(id = user_id, n = n))
-    request.encoding = "utf-8"
-    page = bs4.BeautifulSoup(request.text, "lxml")
+      "/userratings.php?user_id={id}&p={{}}&orderby=4".format(id=user_id)
+
+  for page in pages_from(FA):
     tags = page.find_all(
       class_ = ["user-ratings-header", "user-ratings-movie"])
     cur_date = None
-    
+
     for tag in tags:
       if tag["class"] == ["user-ratings-header"]:
         cur_date = get_date(tag, lang)
@@ -99,15 +114,7 @@ def get_profile_data(user_id, lang):
           "Rating10": tag.find_all(class_ = "ur-mr-rat")[0].string
         }
         data.append(film)
-    
-    eof = request.status_code != 200
-    if not eof:
-      print("Página {n}".format(n = n), end = "\r")
-    else:
-      print("Página {n}. Download complete!".format(n = n - 1))
-    
-    n += 1
-  
+
   return data
 
 
@@ -115,15 +122,10 @@ def get_list_data(user_id, list_id, lang):
   """Gets list of films from list id"""
 
   data = []
-  eof = False
-  n = 1
   FA = "https://www.filmaffinity.com/" + lang + \
-       "/userlist.php?user_id={user_id}&list_id={list_id}&page={n}"
-
-  while not eof:
-    request = requests.get(FA.format(user_id=user_id,list_id=list_id, n=n))
-    request.encoding = "utf-8"
-    page = bs4.BeautifulSoup(request.text, "lxml")
+       "/userlist.php?user_id={user_id}&list_id={list_id}&page={{}}".format(user_id=user_id, list_id=list_id)
+  
+  for page in pages_from(FA):
     tags = page.find_all(class_=["movie-wrapper"])
 
     for tag in tags:
@@ -134,15 +136,6 @@ def get_list_data(user_id, list_id, lang):
           "Directors": get_directors(tag),
         }
         data.append(film)
-
-    eof = request.status_code != 200
-    if not eof:
-      print("Página {n}".format(n=n), end = "\r")
-    else:
-      print("Página {n}. Download complete!".format(n=n - 1))
-
-    n += 1
-
   return data
 
 
