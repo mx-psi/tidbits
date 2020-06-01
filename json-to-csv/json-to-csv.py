@@ -3,8 +3,6 @@
 # Usage: ./$0 [src.json] [dest.csv]
 # Description: Transforms JSON list in file to CSV file
 
-"""Transforma un fichero json que representa una lista a una hoja de cálculo."""
-
 import sys
 import json
 import csv
@@ -21,7 +19,7 @@ JSON_PATH = sys.argv[1]
 CSV_PATH = sys.argv[2]
 
 
-logging.info("Leyendo JSON de '%s'", JSON_PATH)
+logging.info("Reading JSON from '%s'", JSON_PATH)
 with open(JSON_PATH, "r") as json_file:
     json_data = json.load(json_file)
     if (
@@ -33,17 +31,17 @@ with open(JSON_PATH, "r") as json_file:
         sys.exit(1)
 
 
-logging.info("Escribiendo CSV '%s'", CSV_PATH)
+logging.info("Writing CSV to '%s'", CSV_PATH)
 with open(CSV_PATH, "w") as csv_file:
     writer = csv.writer(csv_file, delimiter=",", quoting=csv.QUOTE_MINIMAL)
 
-    # Intenta conseguir columnas disponibles preservando el orden original
-    header = max(json_data, key=lambda dato: len(dato.keys()))
+    # Attempts to get available fields preserving original order
+    header = max(json_data, key=lambda datapoint: len(datapoint.keys()))
     all_fields = set.union(*(set(dato.keys()) for dato in json_data))
     if set(header) != all_fields:
         logging.warning("Couldn't preserve order of fields")
         header = all_fields
 
     writer.writerow(header)
-    for dato in json_data:
-        writer.writerow(dato.get(key, None) for key in header)
+    for datapoint in json_data:
+        writer.writerow(datapoint.get(key, None) for key in header)
